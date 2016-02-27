@@ -1,20 +1,17 @@
-
-# A very simple Bottle Hello World app for you to get started with...
 from bottle import default_app, route
 from bottle import view
 import MySQLdb
-from bottle import request, response
+from bottle import request, response, static_file
 from bottle import post, get, delete
 from bottle import error
 from bottle import hook
 import json
-import traceback
 from beaker.middleware import SessionMiddleware
-
 from mysite.model.exception import PermissionException
 from mysite.api.proxyService import ProxyService
 from mysite.api.deviceService import DeviceService
 from mysite.api.virtualEntityService import VirtualEntityService
+from mysite.api.propertyService import PropertyService
 from mysite.api.domainService import DomainService
 from mysite.api.groupService import GroupService
 from mysite.api.userService import UserService
@@ -36,6 +33,7 @@ session_options = {
     'session.auto': True,
 }
 
+
 app = SessionMiddleware(default_app(), session_options)
 
 
@@ -44,12 +42,11 @@ proxyService = ProxyService(db=db)
 deviceService = DeviceService(db=db)
 domainService = DomainService(db=db)
 entityService = VirtualEntityService(db=db)
-# propertyService = PropertyService(db=db)
+propertyService = PropertyService(db=db)
 groupService = GroupService(db=db)
 userService = UserService(db=db)
 
 top_level_domain_id = domainService.get_tld_id()
-response.content_type = 'application/json'
 
 @hook('before_request')
 def setup_request():
@@ -64,23 +61,28 @@ def check_permission():
     securityService = SecurityService(db=db)
     try:
         securityService.check_access_permission(request)
-    except PermissionException as e:
-        return json.dumps({'Error': str(e)})
+    except PermissionException:
+        request.environ['PATH_INFO'] = '/error_401'
+    except ValueError:
+        request.environ['PATH_INFO'] = '/error_404'
+    except:
+        request.environ['PATH_INFO'] = '/error_500'
 
 
-
-@hook('after_request')
-def close_connection():
-    pass
-@route('/')
+@get('/')
 @view('public/index')
-def hello_world():
+def get_index():
     pass
 
-# @get('/login')
-# @view('public/login')
-# def get_login():
-#     pass
+@get('/login')
+@view('public/login')
+def get_login():
+    pass
+
+@get('/register')
+@view('public/register')
+def get_register():
+    pass
 
 @error(404)
 def error404(error):
@@ -90,107 +92,134 @@ def error404(error):
 def error405(error):
     return error
 
-# @get('/api/proxies/<id:re:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}>')
-# @get('/api/proxies') #, apply=[check_permission()]
-# def proxy_id_handler(id=None):
-#     proxies = proxyService.getProxy(id)
-#     if not proxies:
-#         return json.dumps({'Error': 'Proxy not found'})
-#     return json.dumps({'Data': proxies})
+#################          Static Routes          ###################################
+@get('/<filename:re:.*\.js>')
+def javascripts(filename):
+    return static_file(filename, root='/static/scripts')
+
+@get('/<filename:re:.*\.css>')
+def stylesheets(filename):
+    return static_file(filename, root='static/css')
+
+@get('/<filename:re:.*\.(jpg|png|gif|ico)>')
+def images(filename):
+    return static_file(filename, root='static/images')
+
+
+@get('/<filename:re:.*\.(eot|ttf|woff|woff2|svg)>')
+def fonts(filename):
+    return static_file(filename, root='static/fonts')
+
+########################################### Resources Section  ####################3
+
+
+############         PROXY     ################
+
+@get('/api/proxy')
+def proxy_get():
+    try:
+        data = proxyService.get(ewquest)
+        return compose_response(200, data,"OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
 
 @post('/api/proxy')
 def proxy_post():
     try:
         data = request.json
         proxyService.set(data)
-        return json.dumps({'Data': data})
-    except Exception as e:
-        return json.dumps({'Error': str(e)})
-    # if data == None:
-    #     return json.dumps({'Code':"1",'Message':'No data sent!'})
-    # else:
-    #     data['time'] = time.strftime('%Y-%m-%d %H:%M:%S')
-    #     # register proxy
-    #     proxyService.insertOrUpdate(data)
-    #     #register devices
-    #     for device in data['devices']:
-    #         deviceService.insertDevice(device)
-
-    #     #register virtualEntity
-    #     entityService.createVirtualEntity(data);
-    #     # register properties
-
-    #     return json.dumps({'Code':"0","Devices":data['devices']})
+        return compose_response(200,data,"OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
 
 @delete('/api/proxy')
 def proxy_delete():
-    data = request.json
-    proxyService.delete(data)
-    return json.dumps({'Data': data})
+    try:
+        data = request.json
+        proxyService.delete(data)
+        return compose_response(200,data,"OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
 
-@post('/api/group')
-def group_post():
-    response = groupService.post()
-    return json.dumps({"Response" : response})
-
-# @get('/api/entity/<id:re:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}>')
-# @get('/api/entity')
-# def getEntityHandler(id=None):
-#     entities = entityService.getVirtualEntity(id)
-#     if not entities:
-#         return json.dumps({'Error': 'Virtual entity not found'})
-#     return json.dumps({'Data': entities})
-
-# @get('/api/entity/<url:path>')
-# def proxy_path_handler(url):
-#     path = re.match(REGEX_URL, url).group()
-#     if not path is url:
-#         error405('wrong url')
-#     domains = path.split('/')
-#     parent_id = top_level_domain_id
-#     name = domains.pop()
-#     for domain in domains:
-#         domain_id = domainService.find_domain(domain,parent_id)
-#         parent_id = domain_id
-
-#     entity = entityService.get_virtual_entity(domain_id,name)
-
-#     return json.dumps({'Data': entity})
+############         ENTITY     ################
 
 @get('/api/entity')
 def entity_get():
-    response = entityService.get()
-    return json.dumps({"Response" : response})
+    try:
+        data = entityService.get(request)
+        return compose_response(200, data,"OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
 
-@get('/api/proxy')
-def proxy_get():
-    response = proxyService.get()
-    return json.dumps({"Response" : response})
+@post('/api/entity')
+def entity_post():
+    try:
+        data = entityService.set(request)
+        return compose_response(200, data,"OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
+
+@delete('/api/entity')
+def entity_delete():
+    try:
+        data = entityService.delete(request)
+        return compose_response(200, data,"OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
+
+############         GROUP     ################
+
+@get('/api/group')
+def group_post():
+    try:
+        data = groupService.get(request)
+        return compose_response(200, data, "OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
+
+@post('/api/group')
+def group_post():
+    try:
+        data = groupService.set(request)
+        return compose_response(200, data, "OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
+
+@delete('/api/group')
+def group_post():
+    try:
+        data = groupService.delete(request)
+        return compose_response(200, data, "OK")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
+
+####################  USER Section  ###################################
 
 @post('/register')
 def register():
     try:
         data = request.json
         userService.register(data)
-        return json.dumps({"Response" : "OK"})
-    except Exception as e:
-        return json.dumps({'Error': str(e)})
+        return compose_response(200, "Registration successful")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
+
 
 @post('/login')
 def login():
     try:
         userService.sign_in(request)
-        return json.dumps({"Response" : "OK"})
-    except Exception as e:
-        return json.dumps({'Error': str(e)})
+        return compose_response(200, "Login OK")
+    except Exception:
+        return compose_response(500,"Internal Server Error")
 
 @get('/logout')
 def logout():
     try:
         userService.sign_out(request)
-        return json.dumps({"Response" : "Logout success"})
-    except Exception as e:
-        return json.dumps({'Error': str(e)})
+        return compose_response(200, "Logout success")
+    except Exception:
+        return compose_response(500, "Internal Server Error")
 
 @get('/session')
 def trySession():
@@ -200,4 +229,33 @@ def trySession():
 
     request.session['something'] = 1
 
+#############  RESPONSE SECTION #############################3
+
+@route('/error_401')
+def rbac_error_response():
+    response.content_type = 'application/json'
+    response.status = 401
+    return json.dumps({'Error': "Authorisation required"})
+
+@route('/error_404')
+def resource_error_response():
+    response.content_type = 'application/json'
+    response.status = 404
+    return json.dumps({'Error': "Resource not found"})
+
+@route('/error_500')
+def internal_error_response():
+    response.content_type = 'application/json'
+    response.status = 500
+    return json.dumps({'Error': "Internal Server Error"})
+
+
+def compose_response(code , data = None , message=""):
+    response.content_type = 'application/json'
+    response.status = code
+    return json.dumps({'Data': data, "message" : message})
+
 application = app
+
+
+

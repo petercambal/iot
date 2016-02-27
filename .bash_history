@@ -8,3 +8,15 @@ cd api/
 ls
 python -m tabnanny proxyService.py
 pip show bottle-beaker
+ls
+cd ..
+ls
+mv img images
+ls 
+mv js scripts
+ls
+mv scc styles
+mv css styles
+ls
+mv static/fonts/* static/
+ls
