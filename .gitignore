@@ -3,7 +3,7 @@ session/*
 .ssh
 .vimrc
 .viminfo
-.cache
+.cache/*
 !.cache/PLACEHOLDER
 .my.cnf
 .mysql_history
