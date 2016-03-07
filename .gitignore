@@ -1,2 +1,9 @@
 session/*
 *.pyc
+.ssh
+.vimrc
+.viminfo
+.cache
+!.cache/PLACEHOLDER
+.my.cnf
+.mysql_history
