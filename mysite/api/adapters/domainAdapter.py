@@ -56,7 +56,8 @@ class DomainAdapter():
         except Exception as e:
             self.db.rollback()
 
-    def getTopLevelDomain(self):
+
+    def get_top_level_domain(self):
 
         query = "SELECT * FROM domain WHERE parent_id is NULL"
         self.cursor.execute(query)
@@ -65,11 +66,22 @@ class DomainAdapter():
         domain = self.create(row)
         return domain
 
+    def find_domain(self,name,parent):
+        query = "SELECT * FROM domain WHERE name='%s' and parent_id = '%s'" % (name,parent)
+        self.cursor.execute(query)
+        row = self.cursor.fetchone()
+
+        domain = self.create(row)
+        return domain
+
     def create(self,row):
 
-        domain = Domain()
-        domain.set_id(row[0])
-        domain.set_name(row[1])
-        domain.set_parent_id(row[2] if len(row) is 3 else None)
+        if row:
+            domain = Domain()
+            domain.set_id(row[0])
+            domain.set_name(row[1])
+            domain.set_parent_id(row[2] if len(row) is 3 else None)
 
-        return domain
+            return domain
+        else:
+            return None

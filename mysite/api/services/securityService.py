@@ -1,4 +1,5 @@
 from mysite.api.adapters.securityAdapter import SecurityAdapter
+from mysite.api.services.dbservice import DB
 
 class SecurityService:
 
@@ -18,9 +19,14 @@ class SecurityService:
             ("/", "root")
         ]
 
-    def __init__(self, db):
+    def __init__(self):
+        db = DB().connect()
         self.db = db
         self.cursor = self.db.cursor()
+
+    def __del__(self):
+        if self.db:
+            self.db.close()
 
     def check_access_permission(self,request):
         securityAdapter = SecurityAdapter(self.cursor)
@@ -33,29 +39,22 @@ class SecurityService:
 
         resource_method = request.method
 
-        # exclude public, admin and static requests from rbac
-        if request.path.startswith('/public') or request.path.startswith('/admin') \
-        or request.path.startswith('/static') or request.path.startswith('/fonts'):
+        # apply rbac only on /api requests
+        if not request.path.startswith('/api'):
             return
 
         if resource_method == "POST":
             resource_method = "SET"
 
-
         resource_name = None
         # search for resource by url
         for request_url , resource in self.resources:
-            if request_url == request.path:
+            if request.path.startswith(request_url):
                 resource_name = resource
                 break
-
         # resource is not found in list
         if resource_name is None:
             raise ValueError("Resource not found")
-
-        # exclude public functions from rbac
-        if resource_name in ["login","logout","register","root"]:
-            return
 
         try:
             securityAdapter.check_permission(role_id, resource_method, resource_name)

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from mysite.api.services.dbservice import DB
 
 class DeviceService:
 
@@ -9,9 +10,14 @@ class DeviceService:
     db = None
     cursor = None
 
-    def __init__(self, db):
+    def __init__(self):
+        db = DB().connect()
         self.db = db
         self.cursor = db.cursor()
+
+    def __del__(self):
+        if self.db:
+            self.db.close()
 
     #get method
     def getDevice(self,id=None):

@@ -53,7 +53,7 @@ class DeviceAdapter:
 
     def update(self,device):
 
-        query = "UPDATE device SET name='%s', proxy_id='%s',last_connected= CURRENT_TIMESTAMP() WHERE id='%s'" %(
+        query = "UPDATE device SET name='%s', proxy_id='%s' WHERE id='%s'" %(
 
                 device.get_name(),
                 device.get_proxy_id(),
@@ -64,9 +64,11 @@ class DeviceAdapter:
         except Exception as e:
             raise e
 
-    def update_timestamp(self):
 
-        query = "UPDATE device SET last_connected= CURRENT_TIMESTAMP()"
+
+    def update_timestamp(self,device):
+
+        query = "UPDATE device SET last_connected= CURRENT_TIMESTAMP() WHERE id = '%s'" % (device.get_id())
 
         try:
             self.cursor.execute(query)

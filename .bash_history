@@ -20,3 +20,8 @@ mv css styles
 ls
 mv static/fonts/* static/
 ls
+mv enity.tpl entity.tpl
+easy_install --help
+ease_install SQLAlchemy
+easy_install SQLAlchemy
+pip install SQLAlchemy

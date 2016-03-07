@@ -3,7 +3,6 @@ from mysite.model.exception import PermissionException
 class SecurityAdapter:
 
     cursor = None
-    deviceAdapter = None
 
     def __init__(self, cursor):
         self.cursor = cursor

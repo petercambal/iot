@@ -55,7 +55,7 @@ class ProxyAdapter:
         except Exception as e:
             raise e
 
-    def update(self,proxy):
+    def update_timestamp(self,proxy):
 
         query = "UPDATE proxy set last_connected = CURRENT_TIMESTAMP() where mac_address = '%s' " % (
             proxy.get_mac_address()
@@ -64,6 +64,19 @@ class ProxyAdapter:
             self.cursor.execute(query)
         except Exception as e:
             raise e
+
+    def update(self,proxy):
+        query = "UPDATE proxy set name = '%s', description='%s' where id='%s'" % (
+            proxy.get_name(),
+            proxy.get_description(),
+            proxy.get_id()
+            )
+
+        try:
+            self.cursor.execute(query)
+        except Exception as e:
+            raise e
+
 
     def proxy_exists(self,proxy):
          self.cursor.execute("SELECT count(*) from proxy where mac_address = '%s'" % proxy.get_mac_address())
@@ -80,9 +93,7 @@ class ProxyAdapter:
         query = "DELETE FROM proxy WHERE id = '%s' " % (id)
         try:
             self.cursor.execute(query)
-            self.db.commit()
         except Exception as e:
-            self.db.rollback()
             raise e
 
     def create(self,row):

@@ -1,0 +1,52 @@
+.navbar{
+    margin-bottom: 0px !important;
+    border-radius: 0px !important;
+}
+
+.spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+
+#intro.intro {
+    padding: 20% 0 0 0;
+}
+
+.intro {
+    height: 100%;
+    padding: 0;
+    width: 100%;
+    position: relative;
+    background: url('http://iot.pythonanywhere.com/static/images/bg1.jpg') no-repeat top center;
+}
+
+.intro .slogan {
+    text-align: center;
+}
+
+.intro .slogan h2 {
+    color: #FFF;
+    text-shadow: none;
+    font-size: 60px;
+    line-height: 60px;
+    font-weight: 700;
+    font-family: Montserrat, sans-serif;
+    background-color: rgba(0, 0, 0, 0);
+    text-decoration: none;
+    text-transform: uppercase;
+    border-width: 0px;
+    border-color: #000;
+    border-style: none;
+    text-shadow: -1px 0 1px #000;
+}
+
+.intro .slogan h4 {
+    color: #fff;
+    text-shadow: -1px 1px 1px #000;
+}
+
+.intro h1,.intro  h2,.intro  h3,.intro  h4.intro ,.intro  h5,.intro  h6 {
+    margin: 0 0 30px;
+    text-transform: uppercase;
+    font-family: Montserrat,sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+

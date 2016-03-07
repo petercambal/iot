@@ -8,18 +8,25 @@ from mysite.api.adapters.propertyAdapter import PropertyAdapter
 from mysite.model.proxy import Proxy
 from mysite.model.virtualEntity import VirtualEntity
 from mysite.model.property import Property
+from mysite.api.services.dbservice import DB
 
 class ProxyService:
 
     db = None
     cursor = None
 
-    def __init__(self, db):
+    def __init__(self):
+        db = DB().connect()
         self.db = db
         self.cursor = self.db.cursor()
 
-    def get(self):
+    def __del__(self):
+        if self.db:
+            self.db.close()
+
+    def get(self,request):
         proxyAdapter = ProxyAdapter(self.cursor)
+
         proxies = proxyAdapter.get_all()
 
         result = []
@@ -42,11 +49,11 @@ class ProxyService:
             # if proxy is registered, update last_connected timestamp
             if proxyAdapter.proxy_exists(proxy):
 
-                proxyAdapter.update(proxy)
+                proxyAdapter.update_timestamp(proxy)
 
                 for device in proxy.get_devices():
                     if deviceAdapter.device_exists(device):
-                        deviceAdapter.update_timestamp()
+                        deviceAdapter.update_timestamp(device)
                     else:
                         deviceAdapter.insert(device)
                         #TODO: add to virtualEntity new property based on device
@@ -94,9 +101,30 @@ class ProxyService:
             self.db.rollback()
             raise e
 
+    def put(self,data):
+        proxyAdapter = ProxyAdapter(self.cursor)
+        deviceAdapter = DeviceAdapter(self.cursor)
+        try:
+            proxy = Proxy.fromJSON(data)
+            if not proxy:
+                raise ValueError('Failed creating proxy')
+            proxyAdapter.update(proxy)
 
-    def delete(self,data):
-       proxyAdapter = ProxyAdapter(self.cursor)
+            for device in proxy.get_devices():
+                deviceAdapter.update(device)
 
-       proxyAdapter.delete(data.get("id"))
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+
+    def delete(self,id):
+        try:
+            proxyAdapter = ProxyAdapter(self.cursor)
+            proxyAdapter.delete(id)
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e
 

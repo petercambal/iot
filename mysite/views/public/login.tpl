@@ -1,5 +1,5 @@
 %rebase('./base.tpl',title="Sign In")
-
+%include  partial/public/nav user=None
 
 
     <div class="container">
@@ -38,10 +38,8 @@
 
                                 <div style="margin-top:10px" class="form-group">
                                     <!-- Button -->
-
                                     <div class="col-sm-12 controls">
-                                      <a id="btn-login" href="#" class="btn btn-success">Login  </a>
-
+                                      <button type="button" id="btn-login" href="#" class="btn btn-success">Login  </button>
                                     </div>
                                 </div>
 
@@ -50,9 +48,9 @@
                                     <div class="col-md-12 control">
                                         <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
                                             Don't have an account!
-                                        <a href="/register">
-                                            Sign Up Here
-                                        </a>
+                                            <a href="/register">
+                                                Sign Up Here
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

@@ -55,6 +55,14 @@ class VirtualEntityAdapter():
 
         return entities_list
 
+    def get_by_domain_id_entity_name(self,domain_id,entity_name):
+        query = "SELECT * FROM virtualEntity WHERE name = '%s' and domain_id = '%s'" % (entity_name,domain_id)
+        self.cursor.execute(query)
+        row = self.cursor.fetchone()
+
+        entity = self.create(row)
+        return entity
+
     def get_by_ids(self,ids):
 
         query = "SELECT * FROM virtualEntity where id in("
@@ -124,15 +132,17 @@ class VirtualEntityAdapter():
             raise e
 
     def create(self,row):
+        if row:
+            entity = VirtualEntity()
+            entity.set_id(row[0])
+            entity.set_name(row[1])
+            entity.set_description(row[2])
+            entity.set_domain_id(row[3])
 
-        entity = VirtualEntity()
-        entity.set_id(row[0])
-        entity.set_name(row[1])
-        entity.set_description(row[2])
-        entity.set_domain_id(row[3])
+            entity.set_properties(self.propertyAdapter.getByEntityId(row[0]))
 
-        entity.set_properties(self.propertyAdapter.getByEntityId(row[0]))
-
-        return entity
+            return entity
+        else:
+            return None
 
 

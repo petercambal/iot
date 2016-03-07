@@ -1,16 +1,30 @@
 from mysite.api.adapters.userAdapter import UserAdapter
+from mysite.api.services.dbservice import DB
 
 class UserService:
 
     db = None
     cursor = None
 
-    def __init__(self, db):
+    def __init__(self):
+        db = DB().connect()
         self.db = db
         self.cursor = self.db.cursor()
 
-    def get(self,data):
-        pass
+    def __del__(self):
+        if self.db:
+            self.db.close()
+
+    def get_user(self,request):
+        try:
+            session = request.session
+            if session['user']:
+                return session['user']
+            else:
+                return None
+        except:
+            return None
+
 
     def sign_out(self,request):
 
@@ -32,6 +46,7 @@ class UserService:
             raise e
 
     def register(self,user_data):
+        user_data.update({"role" : "78c631a2-c54c-11e5-89ba-22000b79ceab"})
         userAdapter = UserAdapter(self.cursor)
 
         try:
