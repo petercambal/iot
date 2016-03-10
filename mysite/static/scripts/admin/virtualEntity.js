@@ -6,7 +6,7 @@ var VirtualEntityModule = (function(){
             type: 'GET',
             url: '/api/entity',
             success: function (data) {
-                data.Data.forEach(function(entity){
+                data.result.forEach(function(entity){
                     console.log(entity.name)
                     $('#entities-table tbody').append(
                         "<tr><td>"+entity.id+"</td><td>"+entity.name+"</td><td>"+entity.description+"</td><td>"+entity.properties.length+"</td></tr>"

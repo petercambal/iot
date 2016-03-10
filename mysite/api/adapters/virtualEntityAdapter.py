@@ -89,6 +89,16 @@ class VirtualEntityAdapter():
     def get_by_condition(self,ids,condition):
         pass
 
+
+    def set_domain(self, entity_id, domain_id):
+
+        query = "UPDATE virtualEntity SET domain_id = '%s' where id='%s'" % (domain_id,entity_id)
+
+        try:
+            self.cursor.execute(query)
+        except Exception as e:
+            raise e
+
     def insert(self,entity):
 
         query = "INSERT INTO virtualEntity (id,name,description,domain_id) VALUES \
@@ -105,7 +115,7 @@ class VirtualEntityAdapter():
 
             raise e
 
-    def update(self,entity):
+    def update(self, entity):
 
         query = "UPDATE virtualEntity SET name='%s', description='%s', domain_id='%s' WHERE id='%s'" % (
             entity.get_name(),

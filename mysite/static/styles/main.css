@@ -50,3 +50,13 @@
     letter-spacing: 1px;
 }
 
+
+.dropdown-hover{
+    background-color: #f1f1fc;
+    border: 3px dotted green;
+}
+
+#table-entities tbody tr{
+    cursor: move;
+}
+

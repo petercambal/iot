@@ -1,4 +1,4 @@
-%rebase('./base.tpl',title='Admin Page')
+%rebase('./base.tpl',title='Admin Page | Proxy')
 
 %include  partial/admin/nav user=user
 

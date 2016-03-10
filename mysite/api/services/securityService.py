@@ -12,6 +12,7 @@ class SecurityService:
             ("/api/device", "device"),
             ("/api/entity", "virtualEntity"),
             ("/api/property", "property"),
+            ("/api/domain", "domain"),
             ("/api/group", "group"),
             ("/login" , "login"),
             ("/logout", "logout"),

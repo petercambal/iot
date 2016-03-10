@@ -5,13 +5,14 @@ class DomainAdapter():
 
     cursor = None
 
-    def __init__(self,cursor):
+    def __init__(self, cursor):
         self.cursor = cursor
 
     def __del__(self):
         pass
 
-    def getById(self,id):
+
+    def getById(self, id):
 
         query = "SELECT * FROM domain WHERE id= '%s'" % (id)
         self.cursor.execute(query)
@@ -20,7 +21,19 @@ class DomainAdapter():
         domain = self.create(row)
         return domain
 
-    def insert(self,domain):
+    def get_all(self):
+        query = "SELECT * FROM domain"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+
+        domains = []
+        for row in rows:
+            domain = self.create(row)
+            domains.append(domain)
+
+        return domains
+
+    def insert(self, domain):
 
         query = "INSERT INTO domain (id,name,parent_id) VALUES \
                 ('%s','%s','%s')" % (
@@ -31,10 +44,9 @@ class DomainAdapter():
         try:
             self.cursor.execute(query)
         except Exception as e:
-            self.db.rollback()
             raise e
 
-    def update(self,domain):
+    def update(self, domain):
 
         query = "UPDATE domain SET name= '%s', parent_id='%s' where id= '%s'" % (
                     domain.get_name(),
@@ -44,17 +56,15 @@ class DomainAdapter():
         try:
             self.cursor.execute(query)
         except Exception as e:
-            self.db.rollback()
             raise e
 
-    def delete(self,id):
+    def delete(self, id):
 
         query = "DELETE FROM domain WHERE id = '%s' " % (id)
         try:
             self.cursor.execute(query)
-            self.db.commit()
         except Exception as e:
-            self.db.rollback()
+            raise e
 
 
     def get_top_level_domain(self):
@@ -66,7 +76,7 @@ class DomainAdapter():
         domain = self.create(row)
         return domain
 
-    def find_domain(self,name,parent):
+    def find_domain(self, name, parent):
         query = "SELECT * FROM domain WHERE name='%s' and parent_id = '%s'" % (name,parent)
         self.cursor.execute(query)
         row = self.cursor.fetchone()
@@ -74,7 +84,7 @@ class DomainAdapter():
         domain = self.create(row)
         return domain
 
-    def create(self,row):
+    def create(self, row):
 
         if row:
             domain = Domain()

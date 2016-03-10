@@ -1,3 +1,4 @@
+from uuid import uuid1
 
 class Domain():
 
@@ -43,7 +44,10 @@ class Domain():
                 raise ValueError("Parameter data must be instance of dictionary %s found" % type(json_data))
 
             domain = Domain()
-            domain.set_id(json_data.get("id",None))
+            if json_data.get("id") == "":
+                domain.set_id(str(uuid1()))
+            else:
+                domain.set_id(json_data.get("id"))
             domain.set_name(json_data.get("name",None))
             domain.set_parent_id(json_data.get("parent_id",None))
 

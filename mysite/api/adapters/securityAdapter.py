@@ -1,5 +1,6 @@
 from mysite.model.exception import PermissionException
 
+
 class SecurityAdapter:
 
     cursor = None
@@ -10,19 +11,24 @@ class SecurityAdapter:
     def __del__(self):
         pass
 
-
     def get_default_role_id(self):
         return "78c631a2-c54c-11e5-89ba-22000b79ceab"
 
     def check_permission(self, role_id, resource_method, resource_name):
         try:
             # retrieve resource id based on name and method
-            query = "SELECT id from resource where name = '%s' and method = '%s'" % (resource_name,resource_method)
+            query = "SELECT id from resource where name = '%s' and method = '%s'" % (resource_name, resource_method)
+
+            print (resource_name)
 
             self.cursor.execute(query)
-            resource_id = self.cursor.fetchone()[0]
 
-            if resource_id is None:
+            try:
+                resource_id = self.cursor.fetchone()[0]
+            except:
+                raise ValueError("Resource not found")
+
+            if not resource_id:
                 raise ValueError("Resource not found")
 
             query = "SELECT count(*) from permission where role_id= '%s' and resource_id = '%s'" % (role_id,resource_id)

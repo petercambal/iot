@@ -12,15 +12,15 @@ var ProxyModule = (function(){
             success: function (data) {
                 //  <a href="#" class="list-group-item">First item <span class="badge">12</span></a>
                 $('#proxy-list').children().remove();
-                if (data.Data.length == 0 ){
+                if (data.result.length == 0 ){
                     $('#proxy-list').append('Proxy list is empty')
                     return False
                 }
-                data.Data.forEach(function(proxy){
+                data.result.forEach(function(proxy){
                     $('#proxy-list').append('<a href="#" class="list-group-item proxy-name" data-id="'+proxy.id+'">'+proxy.name+' <span class="badge">'+proxy.devices.length+'</span></a>');
                 });
 
-                proxyResult = data.Data
+                proxyResult = data.result
 
             },
             error: function (jqXHR, textStatus, errorThrown) {

@@ -92,6 +92,15 @@ def load_admin_proxy_page():
     except:
         request.environ['PATH_INFO'] = '/error_404'
 
+@get('/admin/domain')
+@view('admin/domain')
+def load_admin_domain_page():
+    try:
+        user = userService.get_user(request)
+        return dict(user=user)
+    except:
+        request.environ['PATH_INFO'] = '/error_404'
+
 
 
 @error(404)
@@ -206,6 +215,28 @@ def entity_delete(id):
         return compose_response(200, data,"OK")
     except Exception as e:
         return compose_response(500,str(e), "Internal Server Error")
+############         DOMAIN     ###############
+
+@get('/api/domain')
+@get('/api/domain/<id>')
+def domain_get(id = None):
+    try:
+        domainService = DomainService()
+        data = domainService.get(id)
+        return compose_response(200, data,"OK")
+    except Exception as e:
+        logging.exception("Something awful happened!")
+        return compose_response(500,str(e), "Internal Server Error")
+
+@post('/api/domain')
+def domain_post():
+    try:
+        domainService = DomainService()
+        data = domainService.set(request.json)
+        return compose_response(200, data,"OK")
+    except Exception as e:
+        logging.exception("Something awful happened!")
+        return compose_response(500,str(e), "Internal Server Error")
 
 ############         GROUP     ################
 
@@ -299,7 +330,7 @@ def internal_error_response():
 def compose_response(code , data = "" , message=""):
     response.content_type = 'application/json'
     response.status = code
-    return json.dumps({'Data': data, "message" : message})
+    return json.dumps({'result': data, "message" : message})
 
 application = app
 
