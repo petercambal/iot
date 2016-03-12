@@ -115,7 +115,7 @@ def error404(error):
 #################          Static Routes          ###################################
 @get('/<filename:re:.*\.js>')
 def javascripts(filename):
-    return static_file(filename, root='/static/scripts')
+    return static_file(filename, root='static/scripts')
 
 @get('/<filename:re:.*\.css>')
 def stylesheets(filename):
@@ -123,7 +123,7 @@ def stylesheets(filename):
 
 @get('/<filename:re:.*\.(jpg|png|gif|ico)>')
 def images(filename):
-    return static_file(filename, root='static/images')
+    return static_file(filename, root='static/img')
 
 
 @get('/<filename:re:.*\.(eot|ttf|woff|woff2|svg)>')
@@ -172,6 +172,17 @@ def proxy_delete(id):
         proxyService = ProxyService()
         data = request.json
         proxyService.delete(id)
+        return compose_response(200,data,"OK")
+    except Exception as e:
+        return compose_response(500,str(e), "Internal Server Error")
+
+############         DEVICE     ################
+@post('/api/device')
+def device_post():
+    try:
+        deviceService = DeviceService()
+        data = request.json
+        deviceService.set(data)
         return compose_response(200,data,"OK")
     except Exception as e:
         return compose_response(500,str(e), "Internal Server Error")

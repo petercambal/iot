@@ -75,6 +75,14 @@ class DeviceAdapter:
         except Exception as e:
             raise e
 
+    def update_name(self,id,name):
+        query = "UPDATE device set name='%s' where id = '%s'" % (name,id)
+
+        try:
+            self.cursor.execute(query)
+        except Exception as e:
+            raise e
+
     def device_exists(self,device):
          self.cursor.execute("SELECT count(*) from device where id = '%s'" % device.get_id())
          count = self.cursor.fetchone()[0]

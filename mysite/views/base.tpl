@@ -5,6 +5,7 @@
         <script src="../static/scripts/config.js"></script>
 
         <link href="../static/styles/bootstrap.css" rel="stylesheet" />
+        <link href="../static/styles/bootstrap-editable.css" rel="stylesheet" />
 
         <link href="../static/styles/simple-sidebar.css" rel="stylesheet">
         <link href="../static/styles/dataTables.bootstrap.css" rel="stylesheet">

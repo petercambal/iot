@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from mysite.api.services.dbservice import DB
+from mysite.api.adapters.deviceAdapter import DeviceAdapter
 
 class DeviceService:
 
@@ -19,46 +20,19 @@ class DeviceService:
         if self.db:
             self.db.close()
 
-    #get method
-    def getDevice(self,id=None):
-        if id == None:
-            query = "SELECT * FROM device"
-        else:
-            query = "SELECT * FROM device WHERE id='%s'" % (id)
-        self.cursor.execute(query)
-        rows = self.cursor.fetchall()
-        result_list = []
-        for row in rows:
-            p = {}
-            p['id'] = row[0]
-            p['proxy_id'] = row[1]
-            p['name'] = row[2]
-            p['last_connected'] = str(row[3])
-            result_list.append(p)
-        return result_list
-
-    #delete method
-    def deleteProxy(self,id):
-        query = "DELETE FROM device WHERE id = '%s' " % (id)
+    def set(self,data):
+        device_adapter = DeviceAdapter(self.cursor)
         try:
-            self.cursor.execute(query)
+            # name is name of column in db
+            name = data.get('name',None)
+            id = data.get('pk',None)
+            value = data.get('value',None)
+
+            if name and id and value:
+                if name == "name":
+                    device_adapter.update_name(id,value)
+
             self.db.commit()
         except Exception as e:
             self.db.rollback()
-
-
-    # post method
-    def insertDevice(self,data):
-
-        query = "INSERT INTO device (id,proxy_id,name) VALUES \
-			 ('%s','%s','%s')" % (
-            data['id'],
-            data['proxyId'],
-            data['name']
-            )
-        try:
-            self.cursor.execute(query)
-            self.db.commit()
-        except Exception as e:
-            self.db.rollback()
-
+            raise e

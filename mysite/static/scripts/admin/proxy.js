@@ -4,6 +4,8 @@ var ProxyModule = (function(){
 
     var loadProxies = function() {
 
+
+
         return $.ajax({
             type: 'GET',
             url: '/api/proxy',
@@ -22,6 +24,7 @@ var ProxyModule = (function(){
 
                 proxyResult = data.result
 
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 Utils.alertShow('Error loading resources.');
@@ -29,6 +32,8 @@ var ProxyModule = (function(){
             complete: function (jqXHR, textStatus) {
             }
         });
+
+
     };
 
     var loadProxyDetail = function() {
@@ -73,11 +78,10 @@ var ProxyModule = (function(){
                                             <circle cx="10" cy="10" r="9" stroke-width="0" fill="'+fillColor+'" /> \
                                         </svg> \
                                     </span>';
-                // statusMarker = '<span class="glyphicon glyphicon-info-sign id-info-tag" title="Subject ID" data-toggle="popover" data-content="' + fillColor + '" ></span>';
 
                $('#devices-table').append('<tr> \
                                                 <td>'+statusMarker+'</td>\
-                                                <td id="name" data-id="'+device.id+'">'+device.name+'</td>\
+                                                <td data-id="'+device.id+'"><a class="editable" id="name" data-type="text" data-pk="'+device.id+'" data-url="/api/device" data-title = "Enter device name">'+device.name+'</a></td>\
                                                 <td>'+device.last_connected+'</td>\
                                                 <td>Action</td>\
                                             </tr>');
@@ -87,11 +91,19 @@ var ProxyModule = (function(){
                 });
             });
 
+            bindEditable();
             $('#proxy-detail').show();
         }
         else return False
 
     }
+
+    var bindEditable = function(){
+        $('.editable').editable({
+            ajaxOptions: {contentType: 'application/json', dataType: 'json' },
+            params: function(params) { return JSON.stringify(params); }
+        });
+    };
 
     var createDatetime = function(datetime_string) {
         var now = new Date();
@@ -154,8 +166,6 @@ var ProxyModule = (function(){
                    // clearEditModal();
                 }
             });
-
-
     }
 
 
@@ -198,6 +208,8 @@ var ProxyModule = (function(){
          */
         initialize: function() {
 
+            $.fn.editable.defaults.ajaxOptions = {contentType: 'application/json', dataType: 'json'};
+
             $('#proxy-detail').hide();
             loadProxies();
 
@@ -214,4 +226,4 @@ var ProxyModule = (function(){
 })();
 
 
-require(['jquery', 'bootstrap','utils'], ProxyModule.initialize);
+require(['jquery', 'bootstrap','editable','utils'], ProxyModule.initialize);

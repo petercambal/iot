@@ -7,12 +7,11 @@ var VirtualEntityModule = (function(){
             url: '/api/entity',
             success: function (data) {
                 data.result.forEach(function(entity){
-                    console.log(entity.name)
                     $('#entities-table tbody').append(
                         "<tr><td>"+entity.id+"</td><td>"+entity.name+"</td><td>"+entity.description+"</td><td>"+entity.properties.length+"</td></tr>"
+                    );
 
-                        );
-
+                    $('#entity-list').append('<a href="#" class="list-group-item entity-name" data-id="'+entity.id+'">'+entity.name+'</a>');
                 });
 
             },
@@ -39,4 +38,4 @@ var VirtualEntityModule = (function(){
 })();
 
 
-require(['jquery', 'bootstrap','utils'], VirtualEntityModule.initialize);
+require(['jquery', 'bootstrap','editable','utils'], VirtualEntityModule.initialize);

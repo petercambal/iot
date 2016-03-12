@@ -11,6 +11,7 @@ require.config({
         datatablesBootstrap: 'lib/dataTables.bootstrap',
         datatablesTableTools: 'lib/dataTables.tableTools.min',
         chosen: 'lib/chosen.jquery',
+        editable : 'lib/bootstrap-editable.min',
         utils: 'utils',
     },
     shim: {
@@ -20,6 +21,7 @@ require.config({
         datatablesBootstrap: ['jquery'],
         datatablesTableTools: ['jquery'],
         treeview: ['jquery'],
-        chosen: ['jquery']
+        chosen: ['jquery'],
+        editable: ['jquery']
     }
 });
