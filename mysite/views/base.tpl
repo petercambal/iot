@@ -11,7 +11,9 @@
         <link href="../static/styles/dataTables.bootstrap.css" rel="stylesheet">
         <link href="../static/styles/dataTables.tableTools.css" rel="stylesheet">
         <link href="../static/styles/main.css" rel="stylesheet" />
-
+        <link href="../static/styles/jquery-ui.min.css" rel="stylesheet" />
+        <link href="../static/styles/jquery-ui.structure.min.css" rel="stylesheet" />
+        <link href="../static/styles/jquery-ui.theme.min.css" rel="stylesheet" />
     </head>
 
     <body>

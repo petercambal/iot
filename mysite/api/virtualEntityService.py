@@ -1,13 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from mysite.model.virtualEntity import VirtualEntity
 from mysite.api.adapters.virtualEntityAdapter import VirtualEntityAdapter
 from mysite.api.adapters.domainAdapter import DomainAdapter
+from mysite.api.adapters.propertyAdapter import PropertyAdapter
 from mysite.api.services.dbservice import DB
 import re
 
-class VirtualEntityService:
 
+class VirtualEntityService:
     db = None
     cursor = None
     re_uuid = re.compile(r'(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})')
@@ -24,31 +26,31 @@ class VirtualEntityService:
             print("EntityService - Closing")
             self.db.close()
 
-    def get(self,request_url):
+    def get(self, request_url):
         entityAdapter = VirtualEntityAdapter(self.cursor)
         domainAdapter = DomainAdapter(self.cursor)
         id = None
         path = None
 
-        if re.match(self.re_uuid,request_url):
+        if re.match(self.re_uuid, request_url):
             id = re.search(self.re_uuid, request_url).group('uuid')
             entity = entityAdapter.getById(id)
             return entity.toJSON()
 
-        elif re.match(self.re_url,request_url):
+        elif re.match(self.re_url, request_url):
             top_level_domain_id = domainAdapter.get_top_level_domain().get_id()
-            path = re.search(self.re_url,request_url).group('url')
+            path = re.search(self.re_url, request_url).group('url')
             domains = path.split('/')
             parent_id = top_level_domain_id
             name = domains.pop()
             for domain in domains:
-                domain = domainAdapter.find_domain(domain,parent_id)
+                domain = domainAdapter.find_domain(domain, parent_id)
                 if domain:
                     parent_id = domain.get_id()
                 else:
                     return None
 
-            entity = entityAdapter.get_by_domain_id_entity_name(parent_id,name)
+            entity = entityAdapter.get_by_domain_id_entity_name(parent_id, name)
             if entity:
                 return entity.toJSON()
             else:
@@ -62,10 +64,57 @@ class VirtualEntityService:
                 result.append(entity.toJSON())
             return result
 
-    def set(self):
-       pass
+    def put(self, data):
+        entity_adapter = VirtualEntityAdapter(self.cursor)
+        try:
 
-    def delete(self):
-       pass
+            source = data.get('source')
+
+            if source == "inline":
+
+                id = data.get("pk", None)
+                column = data.get("name", None)
+                value = data.get("value", None)
+
+                if id and column and value:
+                    if column.startswith("entity"):
+                        if "name" in column:
+                            column = "name"
+                        elif "description" in column:
+                            column = "description"
+
+                        entity_adapter.inline_update(id, column, value)
+
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def set(self, data):
+        entity_adapter = VirtualEntityAdapter(self.cursor)
+        property_adapter = PropertyAdapter(self.cursor)
+        try:
+            entity = VirtualEntity.fromJSON(data)
+
+            if entity:
+                entity_adapter.insert(entity)
+
+                for property in entity.get_properties():
+                    property_adapter.insert(property)
+
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e
 
 
+    def delete(self, id):
+        entity_adapter = VirtualEntityAdapter(self.cursor)
+        property_adapter = PropertyAdapter(self.cursor)
+        try:
+            property_adapter.deleteByEntityId(id)
+            entity_adapter.delete(id)
+            self.db.commit()
+        except Exception as e:
+            self.db.rollback()
+            raise e

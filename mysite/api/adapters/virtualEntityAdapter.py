@@ -125,20 +125,28 @@ class VirtualEntityAdapter():
             )
         try:
             self.cursor.execute(query)
-
         except Exception as e:
-
             raise e
 
+    def inline_update(self, id,  column, value):
 
-    def delete (self,entity):
+        query = "UPDATE virtualEntity SET %s = '%s' where id ='%s' " % (
+         column,
+         value,
+         id
+        )
+
+        try:
+            self.cursor.execute(query)
+        except Exception as e:
+            raise e
+
+    def delete(self, id):
 
         query = "DELETE FROM virtualEntity WHERE id = '%s' " % (id)
         try:
             self.cursor.execute(query)
-            self.db.commit()
         except Exception as e:
-            self.db.rollback()
             raise e
 
     def create(self,row):

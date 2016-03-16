@@ -60,3 +60,19 @@
     cursor: move;
 }
 
+.ui-selected, .ui-selecting{
+    background-color :#f5f5f5 !important;
+}
+
+.new-property:hover{
+    text-decoration:none;
+}
+
+.detail-content{
+    min-height:600px;
+}
+#entity-placeholder{
+    background: url('http://iot.pythonanywhere.com/static/images/IoT-Graphic.png') no-repeat top center;
+    margin: -15px;
+}
+

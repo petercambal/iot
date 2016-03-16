@@ -1,8 +1,8 @@
 from mysite.model.property import Property
 import uuid
 
-class VirtualEntity():
 
+class VirtualEntity():
     id = None
     name = None
     description = None
@@ -27,25 +27,25 @@ class VirtualEntity():
     def get_properties(self):
         return self.properties
 
-    def set_id(self,id):
+    def set_id(self, id):
         self.id = id
 
-    def set_name(self,name):
+    def set_name(self, name):
         self.name = name
 
-    def set_description(self,description):
+    def set_description(self, description):
         self.description = description
 
-    def set_domain_id(self,domain_id):
+    def set_domain_id(self, domain_id):
         self.domain_id = domain_id
 
-    def add_property(self,property):
+    def add_property(self, property):
         self.properties.append(property)
 
-    def set_properties(self,property_list):
+    def set_properties(self, property_list):
         self.properties = property_list
 
-    def remove_property(self,property):
+    def remove_property(self, property):
         try:
             self.properties.remove(property)
             return True
@@ -57,12 +57,12 @@ class VirtualEntity():
 
     def toJSON(self):
         result = {
-                "id" : self.id,
-                "name" : self.name,
-                "description" : self.description,
-                "domain_id" : self.domain_id,
-                "properties" : []
-            }
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "domain_id": self.domain_id,
+            "properties": []
+        }
 
         for property in self.properties:
             result.get('properties').append(property.toJSON())
@@ -77,17 +77,15 @@ class VirtualEntity():
 
             entity = VirtualEntity()
 
-            entity.set_id(json_data.get("id",str(uuid.uuid1())))
-            entity.set_name(json_data.get("name",None))
-            entity.set_description(json_data.get("description",None))
-            entity.set_domain_id(json_data.get("domain_id",None))
+            entity.set_id(json_data.get("id", str(uuid.uuid1())))
+            entity.set_name(json_data.get("name", None))
+            entity.set_description(json_data.get("description", None))
+            entity.set_domain_id(json_data.get("domain_id", None))
 
-            for property_data in json_data.get("properties"):
+            for property_data in json_data.get("properties", []):
                 property = Property.fromJSON(property_data)
                 entity.add_property(property)
 
             return entity
 
         return None
-
-

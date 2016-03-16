@@ -25,3 +25,6 @@ easy_install --help
 ease_install SQLAlchemy
 easy_install SQLAlchemy
 pip install SQLAlchemy
+git status
+git commit -am "device names xeditable"
+git push

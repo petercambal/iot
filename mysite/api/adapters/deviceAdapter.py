@@ -2,8 +2,8 @@
 
 from mysite.model.device import Device
 
-class DeviceAdapter:
 
+class DeviceAdapter:
     cursor = None
 
     def __init__(self, cursor):
@@ -12,7 +12,7 @@ class DeviceAdapter:
     def __del__(self):
         pass
 
-    def get_by_id(self,id):
+    def get_by_id(self, id):
 
         query = "SELECT * FROM device WHERE id = '%s'" % (id)
         self.cursor.execute(query)
@@ -22,7 +22,17 @@ class DeviceAdapter:
         return device
 
     def get_all(self):
-        pass
+
+        query = "SELECT * FROM device"
+        self.cursor.execute(query)
+        rows = self.cursor.fetchall()
+
+        devices = []
+        for row in rows:
+            device = self.create(row)
+            devices.append(device)
+
+        return devices
 
     def get_by_proxy_id(self, proxy_id):
 
@@ -37,36 +47,33 @@ class DeviceAdapter:
 
         return devices
 
-
-    def insert(self,device):
+    def insert(self, device):
 
         query = "INSERT INTO device (id,name,proxy_id) VALUES \
 			 ('%s','%s','%s')" % (
             device.get_id(),
             device.get_name(),
             device.get_proxy_id()
-            )
+        )
         try:
             self.cursor.execute(query)
         except Exception as e:
             raise e
 
-    def update(self,device):
+    def update(self, device):
 
-        query = "UPDATE device SET name='%s', proxy_id='%s' WHERE id='%s'" %(
+        query = "UPDATE device SET name='%s', proxy_id='%s' WHERE id='%s'" % (
 
-                device.get_name(),
-                device.get_proxy_id(),
-                device.get_id()
-            )
+            device.get_name(),
+            device.get_proxy_id(),
+            device.get_id()
+        )
         try:
             self.cursor.execute(query)
         except Exception as e:
             raise e
 
-
-
-    def update_timestamp(self,device):
+    def update_timestamp(self, device):
 
         query = "UPDATE device SET last_connected= CURRENT_TIMESTAMP() WHERE id = '%s'" % (device.get_id())
 
@@ -75,43 +82,40 @@ class DeviceAdapter:
         except Exception as e:
             raise e
 
-    def update_name(self,id,name):
-        query = "UPDATE device set name='%s' where id = '%s'" % (name,id)
+    def update_name(self, id, name):
+        query = "UPDATE device set name='%s' where id = '%s'" % (name, id)
 
         try:
             self.cursor.execute(query)
         except Exception as e:
             raise e
 
-    def device_exists(self,device):
-         self.cursor.execute("SELECT count(*) from device where id = '%s'" % device.get_id())
-         count = self.cursor.fetchone()[0]
+    def device_exists(self, device):
+        self.cursor.execute("SELECT count(*) from device where id = '%s'" % device.get_id())
+        count = self.cursor.fetchone()[0]
 
-         if count is 0:
+        if count is 0:
             return False
-         else:
+        else:
             return True
 
-
-    def delete(self,id):
+    def delete(self, id):
 
         query = "DELETE FROM device WHERE id = '%s' " % (id)
         try:
             self.cursor.execute(query)
-            self.db.commit()
         except Exception as e:
-            self.db.rollback()
+            raise e
 
-    def delete_by_proxy_id(self,proxy_id):
+    def delete_by_proxy_id(self, proxy_id):
 
-        query = "DELETE FROM device WHERE proxy_id = '%s'" %(id)
+        query = "DELETE FROM device WHERE proxy_id = '%s'" % (proxy_id)
         try:
             self.cursor.execute(query)
-            self.db.commit()
         except Exception as e:
-            self.db.rollback()
+            raise e
 
-    def create(self,row):
+    def create(self, row):
         device = Device()
         device.set_id(row[0])
         device.set_proxy_id(row[1])

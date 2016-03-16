@@ -20,17 +20,35 @@ class DeviceService:
         if self.db:
             self.db.close()
 
-    def set(self,data):
+    def get(self, id):
+        device_adapter = DeviceAdapter(self.cursor)
+        try:
+
+            if id:
+                pass
+            else:
+                devices = device_adapter.get_all()
+                result = []
+
+                for device in devices:
+                    result.append(device.toJSON())
+
+                return result
+        except Exception as e:
+            raise e
+
+
+    def set(self, data):
         device_adapter = DeviceAdapter(self.cursor)
         try:
             # name is name of column in db
-            name = data.get('name',None)
-            id = data.get('pk',None)
-            value = data.get('value',None)
+            name = data.get('name', None)
+            id = data.get('pk', None)
+            value = data.get('value', None)
 
             if name and id and value:
                 if name == "name":
-                    device_adapter.update_name(id,value)
+                    device_adapter.update_name(id, value)
 
             self.db.commit()
         except Exception as e:

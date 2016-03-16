@@ -46,31 +46,31 @@
                                                 <div class="tab-pane active" id="general">
                                                     <input id="proxy-id" hidden>
                                                     <div class="form-group">
-                                                        <label for="usr">Name:</label>
+                                                        <label for="proxy-name">Name:</label>
                                                         <input type="text" class="form-control" id="proxy-name">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="description">Description:</label>
+                                                        <label for="proxy-description">Description:</label>
                                                         <input type="text" class="form-control" id="proxy-description">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="last-connected">Last connected:</label>
+                                                        <label for="proxy-last-connected">Last connected:</label>
                                                         <input type="text" class="form-control" id="proxy-last-connected" readonly="readonly">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="ip-address">IP Address:</label>
+                                                        <label for="proxy-ip-address">IP Address:</label>
                                                         <input type="text" class="form-control" id="proxy-ip-address" readonly="readonly">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="mac-address">MAC Address:</label>
+                                                        <label for="proxy-mac-address">MAC Address:</label>
                                                         <input type="text" class="form-control" id="proxy-mac-address" readonly="readonly">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="model">Model:</label>
+                                                        <label for="proxy-model">Model:</label>
                                                         <input type="text" class="form-control" id="proxy-model" readonly="readonly">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="os">OS:</label>
+                                                        <label for="proxy-os">OS:</label>
                                                         <input type="text" class="form-control" id="proxy-os" readonly="readonly">
                                                     </div>
                                                 </div>
@@ -124,7 +124,7 @@
                     <p>Do you want to proceed?</p>
                     <input id="delete-proxy-id" hidden>
                     <div class="form-group">
-                        <label for="usr">Name:</label>
+                        <label for="delete-proxy-name">Name:</label>
                         <input type="text" class="form-control" id="delete-proxy-name" readonly="readonly">
                     </div>
                 </div>

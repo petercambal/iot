@@ -23,8 +23,6 @@ session_options = {
     'session.auto': True,
 }
 
-
-
 app = SessionMiddleware(default_app(), session_options)
 
 userService = UserService()
@@ -33,6 +31,7 @@ userService = UserService()
 @hook('before_request')
 def setup_request():
     request.session = request.environ['beaker.session']
+
 
 @hook('before_request')
 def check_permission():
@@ -49,21 +48,25 @@ def check_permission():
         logging.exception("Something awful happened!")
         redirect('/error/api/500')
 
+
 @get('/')
 @view('public/index')
 def get_index():
     user = userService.get_user(request)
     return dict(user=user)
 
+
 @get('/login')
 @view('public/login')
 def get_login():
     pass
 
+
 @get('/register')
 @view('public/register')
 def get_register():
     pass
+
 
 @get('/admin')
 @view('admin/index')
@@ -74,6 +77,7 @@ def admin_index():
     except:
         request.environ['PATH_INFO'] = '/error_404'
 
+
 @get('/admin/entity')
 @view('admin/entity')
 def load_admin_entity_page():
@@ -83,6 +87,7 @@ def load_admin_entity_page():
     except:
         request.environ['PATH_INFO'] = '/error_404'
 
+
 @get('/admin/proxy')
 @view('admin/proxy')
 def load_admin_proxy_page():
@@ -91,6 +96,7 @@ def load_admin_proxy_page():
         return dict(user=user)
     except:
         request.environ['PATH_INFO'] = '/error_404'
+
 
 @get('/admin/domain')
 @view('admin/domain')
@@ -102,7 +108,6 @@ def load_admin_domain_page():
         request.environ['PATH_INFO'] = '/error_404'
 
 
-
 @error(404)
 @view('public/page404')
 def error404(error):
@@ -112,14 +117,17 @@ def error404(error):
     except:
         return dict(user=None)
 
+
 #################          Static Routes          ###################################
 @get('/<filename:re:.*\.js>')
 def javascripts(filename):
     return static_file(filename, root='static/scripts')
 
+
 @get('/<filename:re:.*\.css>')
 def stylesheets(filename):
     return static_file(filename, root='static/css')
+
 
 @get('/<filename:re:.*\.(jpg|png|gif|ico)>')
 def images(filename):
@@ -129,6 +137,7 @@ def images(filename):
 @get('/<filename:re:.*\.(eot|ttf|woff|woff2|svg)>')
 def fonts(filename):
     return static_file(filename, root='static/fonts')
+
 
 ########################################### Resources Section  ####################3
 
@@ -140,9 +149,10 @@ def proxy_get():
     try:
         proxyService = ProxyService()
         data = proxyService.get(request)
-        return compose_response(200, data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @post('/api/proxy')
 def proxy_post():
@@ -150,9 +160,10 @@ def proxy_post():
         proxyService = ProxyService()
         data = request.json
         proxyService.set(data)
-        return compose_response(200,data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @put('/api/proxy')
 def proxy_put():
@@ -160,10 +171,10 @@ def proxy_put():
         proxyService = ProxyService()
         data = request.json
         proxyService.put(data)
-        return compose_response(200,data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
         logging.exception("Something awful happened!")
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
 
 
 @delete('/api/proxy/<id>')
@@ -172,20 +183,33 @@ def proxy_delete(id):
         proxyService = ProxyService()
         data = request.json
         proxyService.delete(id)
-        return compose_response(200,data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 ############         DEVICE     ################
+@get('/api/device')
+@get('/api/device/<id>')
+def device_get(id=None):
+    try:
+        deviceService = DeviceService()
+        data = deviceService.get(id)
+        return compose_response(200, data, "OK")
+    except Exception as e:
+        return compose_response(500, str(e), "Internal Server Error")
+
+
 @post('/api/device')
 def device_post():
     try:
         deviceService = DeviceService()
         data = request.json
         deviceService.set(data)
-        return compose_response(200,data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 ############         ENTITY     ################
 
@@ -194,60 +218,98 @@ def entity_get(url):
     try:
         entityService = VirtualEntityService()
         data = entityService.get(url)
-        return compose_response(200, data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
         logging.exception("Something awful happened!")
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @get('/api/entity')
 def entity_get_all():
     try:
         entityService = VirtualEntityService()
         data = entityService.get("")
-        return compose_response(200, data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
         logging.exception("Something awful happened!")
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @post('/api/entity')
 def entity_post():
     try:
         entityService = VirtualEntityService()
-        data = entityService.set(request)
-        return compose_response(200, data,"OK")
+        data = entityService.set(request.json)
+        return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
+
+@put('/api/entity')
+def entity_put():
+    try:
+        entityService = VirtualEntityService()
+        data = entityService.put(request.json)
+        return compose_response(200, data, "OK")
+    except Exception as e:
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @delete('/api/entity/<id>')
 def entity_delete(id):
     try:
         entityService = VirtualEntityService()
         data = entityService.delete(id)
-        return compose_response(200, data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
+
+############         PROPERTY     ###############
+
+@put('/api/property')
+def property_put():
+    try:
+        propertyService = PropertyService()
+        data = propertyService.put(request.json)
+        return compose_response(200, data, "OK")
+    except Exception as e:
+        return compose_response(500, str(e), "Internal Server Error")
+
+@post('/api/property')
+def property_put():
+    try:
+        propertyService = PropertyService()
+        data = propertyService.set(request.json)
+        return compose_response(200, data, "OK")
+    except Exception as e:
+        return compose_response(500, str(e), "Internal Server Error")
+
+
 ############         DOMAIN     ###############
 
 @get('/api/domain')
 @get('/api/domain/<id>')
-def domain_get(id = None):
+def domain_get(id=None):
     try:
         domainService = DomainService()
         data = domainService.get(id)
-        return compose_response(200, data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
         logging.exception("Something awful happened!")
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @post('/api/domain')
 def domain_post():
     try:
         domainService = DomainService()
         data = domainService.set(request.json)
-        return compose_response(200, data,"OK")
+        return compose_response(200, data, "OK")
     except Exception as e:
         logging.exception("Something awful happened!")
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 ############         GROUP     ################
 
@@ -258,7 +320,8 @@ def group_get():
         data = groupService.get(request)
         return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @post('/api/group')
 def group_post():
@@ -267,7 +330,8 @@ def group_post():
         data = groupService.set(request)
         return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @delete('/api/group')
 def group_delete():
@@ -276,7 +340,8 @@ def group_delete():
         data = groupService.delete(request)
         return compose_response(200, data, "OK")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 ####################  USER Section  ###################################
 
@@ -288,7 +353,7 @@ def register():
         userService.register(data)
         return compose_response(200, "Registration successful")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
 
 
 @post('/login')
@@ -298,7 +363,8 @@ def login():
         userService.sign_in(request)
         return compose_response(200, "Login OK")
     except Exception as e:
-        return compose_response(500,str(e),"Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @get('/logout')
 def logout():
@@ -307,7 +373,8 @@ def logout():
         userService.sign_out(request)
         return compose_response(200, "Logout success")
     except Exception as e:
-        return compose_response(500,str(e), "Internal Server Error")
+        return compose_response(500, str(e), "Internal Server Error")
+
 
 @get('/session')
 def trySession():
@@ -317,6 +384,7 @@ def trySession():
 
     request.session['something'] = 1
 
+
 #############  RESPONSE SECTION #############################3
 
 @route('/error/api/401')
@@ -325,11 +393,13 @@ def rbac_error_response():
     response.status = 401
     return json.dumps({'Error': "Authorisation required"})
 
+
 @route('/error/api/404')
 def resource_error_response():
     response.content_type = 'application/json'
     response.status = 404
     return json.dumps({'Error': "Resource not found"})
+
 
 @route('/error/api/500')
 def internal_error_response():
@@ -338,12 +408,10 @@ def internal_error_response():
     return json.dumps({'Error': "Internal Server Error"})
 
 
-def compose_response(code , data = "" , message=""):
+def compose_response(code, data="", message=""):
     response.content_type = 'application/json'
     response.status = code
-    return json.dumps({'result': data, "message" : message})
+    return json.dumps({'result': data, "message": message})
+
 
 application = app
-
-
-
