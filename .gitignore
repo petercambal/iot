@@ -8,3 +8,5 @@ session/*
 !.cache/PLACEHOLDER
 .my.cnf
 .mysql_history
+.bash_history
+.python_history
