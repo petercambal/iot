@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mysite.model.property import Property
+from mysite.api.adapters.deviceAdapter import DeviceAdapter
 
 
 class PropertyAdapter:
@@ -8,6 +9,7 @@ class PropertyAdapter:
 
     def __init__(self, cursor):
         self.cursor = cursor
+        self.deviceAdapter = DeviceAdapter(self.cursor)
 
     def __del__(self):
         pass
@@ -133,6 +135,7 @@ class PropertyAdapter:
             property.set_name(row[1])
             property.set_entity_id(row[2])
             property.set_device_id(row[3])
+            property.set_device(self.deviceAdapter.get_by_id(row[3]))
 
             return property
 

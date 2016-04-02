@@ -121,4 +121,5 @@ class DeviceAdapter:
         device.set_proxy_id(row[1])
         device.set_name(row[2])
         device.set_last_connected(row[3])
+        device.set_topic(row[4])
         return device

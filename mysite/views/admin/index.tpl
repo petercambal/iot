@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1>Internet of things</h1>
-                <p>This is admin page of internet of things name server.</p>
+                <p>This is admin page of internet of things name service.</p>
             </div>
         </div>
     </div>

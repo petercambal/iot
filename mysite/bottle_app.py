@@ -107,6 +107,14 @@ def load_admin_domain_page():
     except:
         request.environ['PATH_INFO'] = '/error_404'
 
+@get('/admin/visualisation')
+@view('admin/visualisation')
+def load_admin_visualisation_page():
+    try:
+        user = userService.get_user(request)
+        return dict(user=user)
+    except:
+        request.environ['PATH_INFO'] = '/error_404'
 
 @error(404)
 @view('public/page404')

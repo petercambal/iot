@@ -85,17 +85,19 @@ var VirtualEntityModule = (function () {
 
             if ((entity.properties.length) == 0) {
 
-                $('#properties-table  > tbody').append('<tr><td></td><td>This entity has no properties click <a class="new-property" href = "#" style="border-bottom:dashed 1px #0088cc"> here </a> to add some.</td><td></td></tr>');
+                $('#properties-table  > tbody').append('<tr><td colspan="5">This entity has no properties click <a class="new-property" href = "#" style="border-bottom:dashed 1px #0088cc"> here </a> to add some.</td></tr>');
             }
             else {
                 entity.properties.forEach(function (property) {
                     $('#properties-table  > tbody').append('<tr>' +
                         '<td></td>' +
-                        '<td><a href = "#" class="editable property-name" id="property-name" data-device ="' + property.device_id + '" data-type="text" data-pk="' + property.id + '" data-url="/api/property" data-title = "Enter property name">' + property.name + '</a></td>' +
-                        '<td>Action</td>' +
+                        '<td><a href = "#" class="editable property-name" id="property-name" data-device ="' + property.device.id + '" data-type="text" data-pk="' + property.id + '" data-url="/api/property" data-title = "Enter property name">' + property.name + '</a></td>' +
+                        '<td class="topic">'+property.device.topic+'</td>' +
+                        '<td><a href="#" class="subscribe">Subscribe</a></td>' +
+                        '<td class="action-result"></td>' +
                         '</tr>');
                 });
-                $('#properties-table  > tbody').append('<tr><td></td><td>Click <a class="new-property" href = "#" style="border-bottom:dashed 1px #0088cc"> here </a> to manage properties.</td><td></td></tr>');
+                $('#properties-table  > tbody').append('<tr><td colspan="5">Click <a class="new-property" href = "#" style="border-bottom:dashed 1px #0088cc"> here </a> to manage properties.</td></tr>');
 
             }
 
@@ -131,6 +133,7 @@ var VirtualEntityModule = (function () {
 
         $('.editable').editable('option', 'disabled', true);
         $('.new-property').on('click', btnAddPropertiesClick);
+        $('.subscribe').on('click',btnSubscribeClick);
     };
 
     var btnAddPropertiesClick = function (e) {
@@ -318,6 +321,47 @@ var VirtualEntityModule = (function () {
         })
     };
 
+    var btnSubscribeClick = function(){
+        // Create a client instance
+	    client = new Paho.MQTT.Client("iot.eclipse.org", 80, "wadaw");
+
+	    // set callback handlers
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+
+        // connect the client
+        client.connect({onSuccess:onConnect});
+    }
+
+    // called when the client connects
+    function onConnect() {
+        // Once a connection has been made, make a subscription and send a message.
+         console.log("onConnect");
+        client.subscribe("iot/raspberry/temperature");
+
+    }
+
+    // called when the client loses its connection
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:"+responseObject.errorMessage);
+      }
+
+    }
+
+    // called when a message arrives
+    function onMessageArrived(message) {
+        $rows = $('#properties-table tbody > tr');
+
+
+        $rows.each(function(){
+            $row = $(this)
+            if ($row.children('td.topic').text() == message.destinationName){
+                $row.children('td.action-result').html(message.payloadString)
+            }
+        })
+    }
+
     return {
 
         /**
@@ -346,4 +390,4 @@ var VirtualEntityModule = (function () {
 })();
 
 
-require(['jquery', 'bootstrap', 'editable', 'jqueryui', 'utils'], VirtualEntityModule.initialize);
+require(['jquery', 'bootstrap', 'editable', 'jqueryui','mqtt', 'utils'], VirtualEntityModule.initialize);

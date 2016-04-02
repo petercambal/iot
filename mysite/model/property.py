@@ -6,6 +6,7 @@ class Property():
     name = None
     entity_id = None
     device_id = None
+    device = None
 
     def __init__(self):
         pass
@@ -22,28 +23,35 @@ class Property():
     def get_device_id(self):
         return self.device_id
 
+    def get_device(self):
+        return self.device
+
     def set_id(self,id):
         self.id = id
-        return self
+
 
     def set_name(self,name):
         self.name = name
-        return self
+
 
     def set_entity_id(self,entity_id):
         self.entity_id = entity_id
-        return self
+
 
     def set_device_id(self,device_id):
         self.device_id = device_id
-        return self
+
+
+    def set_device(self, device):
+        self.device = device
 
     def toJSON(self):
         return{
                 "id"        : self.id,
                 "name"      : self.name,
                 "entity_id" : self.entity_id,
-                "device_id" : self.device_id
+                "device_id" : self.device_id,
+                "device"    : self.device.toJSON()
                 }
 
     @staticmethod

@@ -6,7 +6,10 @@ from mysite.api.adapters.virtualEntityAdapter import VirtualEntityAdapter
 from mysite.api.adapters.domainAdapter import DomainAdapter
 from mysite.api.adapters.propertyAdapter import PropertyAdapter
 from mysite.api.services.dbservice import DB
+from mysite.model.log import Log
+from mysite.api.adapters.logAdapter import LogAdapter
 import re
+from uuid import uuid1
 
 
 class VirtualEntityService:
@@ -19,11 +22,9 @@ class VirtualEntityService:
         db = DB().connect()
         self.db = db
         self.cursor = self.db.cursor()
-        print("EntityService - Opening")
 
     def __del__(self):
         if self.db:
-            print("EntityService - Closing")
             self.db.close()
 
     def get(self, request_url):
@@ -31,6 +32,8 @@ class VirtualEntityService:
         domainAdapter = DomainAdapter(self.cursor)
         id = None
         path = None
+
+        self.log_request()
 
         if re.match(self.re_uuid, request_url):
             id = re.search(self.re_uuid, request_url).group('uuid')
@@ -118,3 +121,19 @@ class VirtualEntityService:
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def log_request(self):
+        try:
+            logAdapter = LogAdapter(self.cursor)
+            log = Log()
+            log.set_id(uuid1().hex)
+            log.set_resource_id("d1cdb926-c54e-11e5-89ba-22000b79ceab")
+            log.set_role_id("78c631a2-c54c-11e5-89ba-22000b79ceab")
+
+            logAdapter.insert(log)
+            self.db.commit()
+        except:
+            pass
+
+
+

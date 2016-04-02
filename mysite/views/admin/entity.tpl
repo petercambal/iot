@@ -79,7 +79,8 @@
                                                     <tr>
                                                         <th style="width:20px"></th>
                                                         <th> Property name</th>
-                                                        <th> Action</th>
+                                                        <th> Topic</th>
+                                                        <th colspan="2"> Action</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
