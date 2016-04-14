@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mysite.model.device import Device
+from mysite.api.adapters.connectOptionAdapter import ConnectOptionsAdapter
 
 
 class DeviceAdapter:
@@ -8,6 +9,7 @@ class DeviceAdapter:
 
     def __init__(self, cursor):
         self.cursor = cursor
+        self.connect_options_adapter = ConnectOptionsAdapter(self.cursor)
 
     def __del__(self):
         pass
@@ -121,5 +123,6 @@ class DeviceAdapter:
         device.set_proxy_id(row[1])
         device.set_name(row[2])
         device.set_last_connected(row[3])
-        device.set_topic(row[4])
+
+        device.set_connect_options(self.connect_options_adapter.get_by_device(row[0]))
         return device

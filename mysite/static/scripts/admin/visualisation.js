@@ -1,9 +1,9 @@
 var VisualisationModule = (function () {
 
-    count = 0;
-    last_topic = null;
-    labels = [];
-    data = [];
+    var count = 0;
+    var last_topic = null;
+    var labels = [];
+    var data = [];
 
     // called when the client connects
     function onConnect() {
@@ -33,8 +33,6 @@ var VisualisationModule = (function () {
         window.LineChart.addData([Number(message.payloadString)],date_string);
         count++;
     }
-
-
 	var lineChartData = {
 		labels : labels,
 		datasets : [
@@ -85,7 +83,7 @@ var VisualisationModule = (function () {
             client.onMessageArrived = onMessageArrived;
 
             // connect the client
-            client.connect({onSuccess:onConnect});
+            client.connect({onSuccess:onConnect})
 
             var ctx = document.getElementById("canvas").getContext("2d");
 		    window.LineChart = new Chart(ctx).Line(lineChartData, {

@@ -10,3 +10,5 @@ session/*
 .mysql_history
 .bash_history
 .python_history
+.mysite/__pycache__/*
+.mysite/api/__pycache__/*

@@ -1,5 +1,6 @@
 from mysite.api.adapters.securityAdapter import SecurityAdapter
 from mysite.api.services.dbservice import DB
+import datetime
 
 class SecurityService:
 
@@ -30,6 +31,8 @@ class SecurityService:
             self.db.close()
 
     def check_access_permission(self,request):
+        print("SecurityService Start")
+        print(datetime.datetime.now())
         securityAdapter = SecurityAdapter(self.cursor)
         session = request.session
         try:
@@ -62,6 +65,6 @@ class SecurityService:
         except Exception as e:
             raise e
 
-
-
+        print(datetime.datetime.now())
+        print("SecurityService end")
 

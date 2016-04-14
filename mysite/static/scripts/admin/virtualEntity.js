@@ -92,7 +92,7 @@ var VirtualEntityModule = (function () {
                     $('#properties-table  > tbody').append('<tr>' +
                         '<td></td>' +
                         '<td><a href = "#" class="editable property-name" id="property-name" data-device ="' + property.device.id + '" data-type="text" data-pk="' + property.id + '" data-url="/api/property" data-title = "Enter property name">' + property.name + '</a></td>' +
-                        '<td class="topic">'+property.device.topic+'</td>' +
+                        '<td class="topic">'+property.device.connect_options[0].topic+'</td>' +
                         '<td><a href="#" class="subscribe">Subscribe</a></td>' +
                         '<td class="action-result"></td>' +
                         '</tr>');

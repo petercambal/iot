@@ -10,6 +10,7 @@ from mysite.model.log import Log
 from mysite.api.adapters.logAdapter import LogAdapter
 import re
 from uuid import uuid1
+import datetime
 
 
 class VirtualEntityService:
@@ -37,7 +38,11 @@ class VirtualEntityService:
 
         if re.match(self.re_uuid, request_url):
             id = re.search(self.re_uuid, request_url).group('uuid')
+            print("ve start")
+            print(datetime.datetime.now())
             entity = entityAdapter.getById(id)
+            print(datetime.datetime.now())
+            print("ve end")
             return entity.toJSON()
 
         elif re.match(self.re_url, request_url):
