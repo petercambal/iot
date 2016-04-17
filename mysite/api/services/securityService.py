@@ -31,15 +31,13 @@ class SecurityService:
             self.db.close()
 
     def check_access_permission(self,request):
-        print("SecurityService Start")
-        print(datetime.datetime.now())
         securityAdapter = SecurityAdapter(self.cursor)
         session = request.session
         try:
             user = session['user']
             role_id = user.get_role().get_id()
         except Exception:
-            role_id = securityAdapter.get_default_role_id()
+            role_id = request.json.get('role_id',securityAdapter.get_default_role_id() )
 
         resource_method = request.method
 

@@ -23,6 +23,19 @@ class ConnectOptionsAdapter:
 
         return connect_options
 
+    def insert(self, connect_option, device_id):
+        query = "INSERT INTO  connect_option (id,device_id,protocol, topic) VALUES  \
+              ('%s','%s','%s','%s')" % (
+            connect_option.get_id(),
+            device_id,
+            connect_option.get_protocol(),
+            connect_option.get_topic()
+        )
+        try:
+            self.cursor.execute(query)
+        except Exception as e:
+            raise e
+
     def create(self, row):
         connect_option = ConnectOption()
 

@@ -1,15 +1,15 @@
 from mysite.model.connect_option import ConnectOption
 
 class Device():
-    id = None
-    name = None
-    proxy_id = None
-    last_connected = None
-    connect_options = []
+
     DATETIME_FORMAT = "%Y/%m/%d %H:%M"
 
     def __init__(self):
-        pass
+        self.id = None
+        self.name = None
+        self.proxy_id = None
+        self.last_connected = None
+        self.connect_options = []
 
     def get_id(self):
         return self.id
@@ -22,6 +22,9 @@ class Device():
 
     def get_last_connected(self):
         return self.last_connected
+
+    def get_connect_options(self):
+        return self.connect_options
 
     def set_id(self, id):
         self.id = id
